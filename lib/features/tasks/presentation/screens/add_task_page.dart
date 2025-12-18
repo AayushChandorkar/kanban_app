@@ -7,20 +7,12 @@ import '../bloc/task_bloc.dart';
 import '../bloc/task_events.dart';
 import '../bloc/task_states.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
-
-  @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
-}
-
-class _AddTaskPageState extends State<AddTaskPage> {
+class AddTaskPage extends StatelessWidget {
+  AddTaskPage({super.key});
 
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  String status = "todo";
   final uuid = const Uuid();
 
   @override
@@ -33,7 +25,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
           );
           Navigator.pop(context);
         }
-
 
         if (state is TaskNoInternet) {
           showDialog(
@@ -48,21 +39,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-
-                    final userId = FirebaseAuth.instance.currentUser!.uid;
-
-                    final task = TaskEntity(
-                      id: uuid.v4(),
-                      title: titleController.text.trim(),
-                      description: descriptionController.text.trim(),
-                      status: status,
-                      createdAt: DateTime.now(),
-                      userId: userId,
-                    );
-
-                    context.read<TaskBloc>().add(
-                      CreateTaskEvent(task: task, userId: userId),
-                    );
+                    _createTask(context, state.status);
                   },
                   child: const Text("Retry"),
                 ),
@@ -72,9 +49,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
         }
 
         if (state is TaskError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
         }
       },
       child: Scaffold(
@@ -92,7 +69,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (v) =>
-                      v == null || v.isEmpty ? "Title is required" : null,
+                  v == null || v.isEmpty ? "Title is required" : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -106,52 +83,52 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 ),
                 const SizedBox(height: 16),
 
-                DropdownButtonFormField<String>(
-                  value: status,
-                  decoration: const InputDecoration(
-                    labelText: "Status",
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: "todo", child: Text("To Do")),
-                    DropdownMenuItem(
-                      value: "in_progress",
-                      child: Text("In Progress"),
-                    ),
-                    DropdownMenuItem(value: "done", child: Text("Done")),
-                  ],
-                  onChanged: (val) {
-                    setState(() => status = val!);
+                BlocBuilder<TaskBloc, TaskState>(
+                  builder: (context, state) {
+                    return DropdownButtonFormField<String>(
+                      value: state.status,
+                      decoration: const InputDecoration(
+                        labelText: "Status",
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "todo",
+                          child: Text("To Do"),
+                        ),
+                        DropdownMenuItem(
+                          value: "in_progress",
+                          child: Text("In Progress"),
+                        ),
+                        DropdownMenuItem(
+                          value: "done",
+                          child: Text("Done"),
+                        ),
+                      ],
+                      onChanged: (val) {
+                        context
+                            .read<TaskBloc>()
+                            .add(TaskStatusChanged(val!));
+                      },
+                    );
                   },
                 ),
+
                 const SizedBox(height: 24),
 
                 BlocBuilder<TaskBloc, TaskState>(
                   builder: (context, state) {
                     if (state is TaskLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
 
                     return ElevatedButton(
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) return;
-
-                        final userId = FirebaseAuth.instance.currentUser!.uid;
-
-                        final task = TaskEntity(
-                          id: uuid.v4(),
-                          title: titleController.text.trim(),
-                          description: descriptionController.text.trim(),
-                          status: status,
-                          createdAt: DateTime.now(),
-                          userId: userId,
-                        );
-
-                        context.read<TaskBloc>().add(
-                          CreateTaskEvent(task: task, userId: userId),
-                        );
+                        _createTask(context, state.status);
                       },
-
                       child: const Text("Create Task"),
                     );
                   },
@@ -161,6 +138,23 @@ class _AddTaskPageState extends State<AddTaskPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _createTask(BuildContext context, String status) {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+
+    final task = TaskEntity(
+      id: uuid.v4(),
+      title: titleController.text.trim(),
+      description: descriptionController.text.trim(),
+      status: status,
+      createdAt: DateTime.now(),
+      userId: userId,
+    );
+
+    context.read<TaskBloc>().add(
+      CreateTaskEvent(task: task, userId: userId),
     );
   }
 }

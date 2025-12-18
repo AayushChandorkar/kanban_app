@@ -7,38 +7,26 @@ import '../bloc/task_bloc.dart';
 import '../bloc/task_events.dart';
 import '../bloc/task_states.dart';
 
-class EditTaskPage extends StatefulWidget {
+class EditTaskPage extends StatelessWidget {
   final TaskEntity task;
 
-  const EditTaskPage({super.key, required this.task});
-
-  @override
-  State<EditTaskPage> createState() => _EditTaskPageState();
-}
-
-class _EditTaskPageState extends State<EditTaskPage> {
-  late final TextEditingController titleController;
-  late final TextEditingController descriptionController;
-  late String status;
-
-  final userId = FirebaseAuth.instance.currentUser!.uid;
+  EditTaskPage({super.key, required this.task});
 
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
+  late final TextEditingController titleController =
+  TextEditingController(text: task.title);
+  late final TextEditingController descriptionController =
+  TextEditingController(text: task.description);
 
-    titleController = TextEditingController(text: widget.task.title);
-    descriptionController = TextEditingController(text: widget.task.description);
-    status = widget.task.status;
-  }
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
+    context.read<TaskBloc>().add(TaskStatusChanged(task.status));
+
     return BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
-
         if (state is TaskSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Task updated successfully")),
@@ -52,24 +40,13 @@ class _EditTaskPageState extends State<EditTaskPage> {
             barrierDismissible: false,
             builder: (_) => AlertDialog(
               title: const Text("No Internet"),
-              content: const Text("Please check your connection and try again."),
+              content:
+              const Text("Please check your connection and try again."),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-
-                    final updatedTask = TaskEntity(
-                      id: widget.task.id,
-                      title: titleController.text.trim(),
-                      description: descriptionController.text.trim(),
-                      status: status,
-                      createdAt: widget.task.createdAt,
-                      userId: userId,
-                    );
-
-                    context.read<TaskBloc>().add(
-                      UpdateTaskEvent(task: updatedTask, userId: userId),
-                    );
+                    _updateTask(context, state.status);
                   },
                   child: const Text("Retry"),
                 )
@@ -92,7 +69,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
               icon: const Icon(Icons.delete),
               onPressed: () {
                 context.read<TaskBloc>().add(
-                  DeleteTaskEvent(id: widget.task.id, userId: userId),
+                  DeleteTaskEvent(id: task.id, userId: userId),
                 );
               },
             ),
@@ -110,7 +87,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
                     labelText: "Title",
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) => v == null || v.isEmpty ? "Title is required" : null,
+                  validator: (v) =>
+                  v == null || v.isEmpty ? "Title is required" : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -124,43 +102,51 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 ),
                 const SizedBox(height: 16),
 
-                DropdownButtonFormField<String>(
-                  value: status,
-                  decoration: const InputDecoration(
-                    labelText: "Status",
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: "todo", child: Text("To Do")),
-                    DropdownMenuItem(value: "in_progress", child: Text("In Progress")),
-                    DropdownMenuItem(value: "done", child: Text("Done")),
-                  ],
-                  onChanged: (val) => setState(() => status = val!),
+                BlocBuilder<TaskBloc, TaskState>(
+                  builder: (context, state) {
+                    return DropdownButtonFormField<String>(
+                      value: state.status,
+                      decoration: const InputDecoration(
+                        labelText: "Status",
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "todo",
+                          child: Text("To Do"),
+                        ),
+                        DropdownMenuItem(
+                          value: "in_progress",
+                          child: Text("In Progress"),
+                        ),
+                        DropdownMenuItem(
+                          value: "done",
+                          child: Text("Done"),
+                        ),
+                      ],
+                      onChanged: (val) {
+                        context
+                            .read<TaskBloc>()
+                            .add(TaskStatusChanged(val!));
+                      },
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 24),
 
                 BlocBuilder<TaskBloc, TaskState>(
                   builder: (context, state) {
                     if (state is TaskLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
 
                     return ElevatedButton(
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) return;
-
-                        final updatedTask = TaskEntity(
-                          id: widget.task.id,
-                          title: titleController.text.trim(),
-                          description: descriptionController.text.trim(),
-                          status: status,
-                          createdAt: widget.task.createdAt,
-                          userId: userId,
-                        );
-
-                        context.read<TaskBloc>().add(
-                          UpdateTaskEvent(task: updatedTask, userId: userId),
-                        );
+                        _updateTask(context, state.status);
                       },
                       child: const Text("Update Task"),
                     );
@@ -171,6 +157,21 @@ class _EditTaskPageState extends State<EditTaskPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _updateTask(BuildContext context, String status) {
+    final updatedTask = TaskEntity(
+      id: task.id,
+      title: titleController.text.trim(),
+      description: descriptionController.text.trim(),
+      status: status,
+      createdAt: task.createdAt,
+      userId: userId,
+    );
+
+    context.read<TaskBloc>().add(
+      UpdateTaskEvent(task: updatedTask, userId: userId),
     );
   }
 }

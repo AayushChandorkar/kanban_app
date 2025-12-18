@@ -17,3 +17,5 @@ class SignUpRequested extends AuthEvent {
 }
 
 class SignOutRequested extends AuthEvent {}
+
+class TogglePasswordVisibility extends AuthEvent {}

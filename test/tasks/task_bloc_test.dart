@@ -14,7 +14,9 @@ void main() {
   late MockDeleteTaskUseCase mockDelete;
   late MockGetAllTasksUseCase mockGetAll;
   late TaskBloc bloc;
+
   const userId = "u1";
+  const testStatus = "todo";
 
   setUp(() {
     mockCreate = MockCreateTaskUseCase();
@@ -34,7 +36,7 @@ void main() {
     id: "1",
     title: "t",
     description: "d",
-    status: "todo",
+    status: testStatus,
     userId: userId,
     createdAt: DateTime.now(),
   );
@@ -43,7 +45,7 @@ void main() {
     when(mockGetAll.call(userId)).thenAnswer((_) async => [task]);
 
     final expected = [
-      TaskLoading(),
+      const TaskLoading(status: testStatus),
       isA<TaskLoaded>(),
     ];
 
@@ -57,9 +59,9 @@ void main() {
     when(mockGetAll.call(userId)).thenAnswer((_) async => [task]);
 
     final expected = [
-      TaskLoading(),
-      TaskSuccess(),
-      TaskLoading(),
+      const TaskLoading(status: testStatus),
+      const TaskSuccess(status: testStatus),
+      const TaskLoading(status: testStatus),
       isA<TaskLoaded>(),
     ];
 
@@ -74,8 +76,8 @@ void main() {
     );
 
     final expected = [
-      TaskLoading(),
-      TaskNoInternet(),
+      const TaskLoading(status: testStatus),
+      const TaskNoInternet(status: testStatus),
     ];
 
     expectLater(bloc.stream, emitsInOrder(expected));

@@ -107,7 +107,7 @@ class DashboardPage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => BlocProvider.value(
                         value: context.read<TaskBloc>(),
-                        child: const AddTaskPage(),
+                        child: AddTaskPage(),
                       ),
                     ),
                   );
@@ -135,7 +135,7 @@ class DashboardPage extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
                       value: context.read<TaskBloc>(),
-                      child: const AddTaskPage(),
+                      child: AddTaskPage(),
                     ),
                   ),
                 );

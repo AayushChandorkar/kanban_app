@@ -24,3 +24,9 @@ class DeleteTaskEvent extends TaskEvent {
   final String userId;
   DeleteTaskEvent({required this.id, required this.userId});
 }
+
+class TaskStatusChanged extends TaskEvent {
+  final String status;
+  TaskStatusChanged(this.status);
+}
+

@@ -28,10 +28,10 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/login': (_) => const LoginPage(),
-        '/dashboard': (_) => const DashboardPage(),
-        '/register': (_) => const RegisterPage(),
-        '/addTask': (_) => const AddTaskPage()
+        '/login': (_) =>  LoginPage(),
+        '/dashboard': (_) => DashboardPage(),
+        '/register': (_) => RegisterPage(),
+        '/addTask': (_) =>  AddTaskPage()
       },
     );
   }

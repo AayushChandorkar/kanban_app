@@ -7,17 +7,11 @@ import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_events.dart';
 import '../bloc/auth/auth_states.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginPage extends StatelessWidget {
+  LoginPage({super.key});
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool obscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +38,11 @@ class _LoginPageState extends State<LoginPage> {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        final email = emailController.text.trim();
-                        final password = passwordController.text.trim();
-
                         context.read<AuthBloc>().add(
-                          SignInRequested(email, password),
+                          SignInRequested(
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                          ),
                         );
                       },
                       child: const Text("Retry"),
@@ -59,8 +53,9 @@ class _LoginPageState extends State<LoginPage> {
             }
 
             if (state is AuthError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
             }
           },
           child: Padding(
@@ -70,49 +65,59 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 TextField(
                   controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: passwordController,
-                  obscureText: obscure,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        obscure ? Icons.visibility_off : Icons.visibility,
+
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    return TextField(
+                      controller: passwordController,
+                      obscureText: state.obscurePassword,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            state.obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            context
+                                .read<AuthBloc>()
+                                .add(TogglePasswordVisibility());
+                          },
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() => obscure = !obscure);
-                      },
-                    ),
-                  ),
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 24),
 
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     if (state is AuthLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
 
                     return ElevatedButton(
                       onPressed: () {
-                        final email = emailController.text.trim();
-                        final password = passwordController.text.trim();
-
                         context.read<AuthBloc>().add(
-                          SignInRequested(email, password),
+                          SignInRequested(
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                          ),
                         );
                       },
                       child: const Text("Login"),
                     );
-
                   },
                 ),
 
@@ -120,7 +125,9 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                      MaterialPageRoute(
+                        builder: (_) => RegisterPage(),
+                      ),
                     );
                   },
                   child: const Text("Don't have an account? Register"),
