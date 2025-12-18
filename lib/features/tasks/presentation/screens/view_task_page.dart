@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/custom_text.dart';
+import '../../../../core/utils/strings.dart';
 import '../../domain/entities/task_entity.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_events.dart';
@@ -18,7 +20,7 @@ class ViewTaskPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Task Details"),
+        title: const DetailText(label:  Strings.taskDetailsText),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -67,20 +69,10 @@ class ViewTaskPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Title", style: Theme.of(context).textTheme.titleLarge),
-          Text(task.title),
-          const SizedBox(height: 16),
-
-          Text("Description", style: Theme.of(context).textTheme.titleLarge),
-          Text(task.description),
-          const SizedBox(height: 16),
-
-          Text("Status", style: Theme.of(context).textTheme.titleLarge),
-          Text(task.status),
-          const SizedBox(height: 16),
-
-          Text("Created At", style: Theme.of(context).textTheme.titleLarge),
-          Text(task.createdAt.toString()),
+          DetailText(label: Strings.titleText, value: task.title),
+          DetailText(label: Strings.descriptionText, value: task.description),
+          DetailText(label: Strings.statusText, value: task.status),
+          DetailText(label: Strings.createdAtText, value: task.createdAt.toString()),
         ],
       ),
     );
@@ -91,12 +83,12 @@ class ViewTaskPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Delete Task"),
-        content: const Text("Are you sure you want to delete this task?"),
+        title: const DetailText(label:  Strings.deleteTaskText),
+        content: const DetailText(label:  Strings.deleteConfirmationText),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: const DetailText(label:  Strings.cancelText),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -105,7 +97,7 @@ class ViewTaskPage extends StatelessWidget {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: const Text("Delete"),
+            child: const DetailText(label:  Strings.deleteText),
           ),
         ],
       ),

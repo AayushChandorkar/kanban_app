@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban_app/core/utils/custom_text.dart';
 
+import '../../../../core/utils/custom_textfield.dart';
+import '../../../../core/utils/strings.dart';
 import '../../../../injection/di.dart';
 import '../../domain/entities/user_entity.dart';
 import '../bloc/auth/auth_bloc.dart';
@@ -26,7 +29,7 @@ class RegisterPage extends StatelessWidget {
         BlocProvider(create: (_) => PasswordVisibilityCubit()),
       ],
       child: Scaffold(
-        appBar: AppBar(title: const Text("Register")),
+        appBar: AppBar(title: DetailText(label: Strings.registerText)),
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
@@ -44,7 +47,7 @@ class RegisterPage extends StatelessWidget {
 
             if (state is AuthError) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+                SnackBar(content: DetailText(label: state.message)),
               );
             }
           },
@@ -52,56 +55,36 @@ class RegisterPage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: ListView(
               children: [
-                TextField(
+                CustomTextField(
                   controller: firstNameController,
-                  decoration: const InputDecoration(
-                    labelText: "First Name",
-                    border: OutlineInputBorder(),
-                  ),
+                  label: "First Name",
                 ),
                 const SizedBox(height: 16),
 
-                TextField(
+                CustomTextField(
                   controller: lastNameController,
-                  decoration: const InputDecoration(
-                    labelText: "Last Name",
-                    border: OutlineInputBorder(),
-                  ),
+                  label: "Last Name",
                 ),
                 const SizedBox(height: 16),
 
-                TextField(
+                CustomTextField(
                   controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: "Email ID",
-                    border: OutlineInputBorder(),
-                  ),
+                  label: "Email ID",
                 ),
                 const SizedBox(height: 16),
 
                 /// ✅ Password field using Cubit
                 BlocBuilder<PasswordVisibilityCubit, bool>(
                   builder: (context, obscure) {
-                    return TextField(
+                    return CustomTextField(
                       controller: passwordController,
-                      obscureText: obscure,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscure
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            context
-                                .read<PasswordVisibilityCubit>()
-                                .toggle();
-                          },
-                        ),
+                      label: "Password",
+                      obscure: obscure,
+                      suffix: Icon(
+                        obscure ? Icons.visibility_off : Icons.visibility,
                       ),
+                      onSuffixTap: () =>
+                          context.read<PasswordVisibilityCubit>().toggle(),
                     );
                   },
                 ),
@@ -125,7 +108,7 @@ class RegisterPage extends StatelessWidget {
                           ),
                         );
                       },
-                      child: const Text("Register"),
+                      child: DetailText(label: Strings.registerText),
                     );
                   },
                 ),

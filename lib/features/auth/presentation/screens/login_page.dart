@@ -1,6 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban_app/core/utils/custom_text.dart';
+import '../../../../core/utils/custom_textfield.dart';
+import '../../../../core/utils/strings.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_events.dart';
 import '../bloc/auth/auth_states.dart';
@@ -36,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: DetailText(label: Strings.loginText,)),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
@@ -45,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
           if (state is AuthError) {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+                .showSnackBar(SnackBar(content: DetailText(label: state.message)));
           }
         },
         builder: (context, state) {
@@ -54,33 +57,22 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextField(
+                CustomTextField(
                   controller: emailController,
-                  decoration: const InputDecoration(
-                    labelText: "Email",
-                    border: OutlineInputBorder(),
-                  ),
+                  label: "Email",
                 ),
                 const SizedBox(height: 16),
                 BlocBuilder<PasswordVisibilityCubit, bool>(
                   builder: (context, obscure) {
-                    return TextField(
+                    return CustomTextField(
                       controller: passwordController,
-                      obscureText: obscure,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscure
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () => context
-                              .read<PasswordVisibilityCubit>()
-                              .toggle(),
-                        ),
+                      label: "Password",
+                      obscure: obscure,
+                      suffix: Icon(
+                        obscure ? Icons.visibility_off : Icons.visibility,
                       ),
+                      onSuffixTap: () =>
+                          context.read<PasswordVisibilityCubit>().toggle(),
                     );
                   },
                 ),
@@ -89,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
                   onPressed: _login,
-                  child: const Text("Login"),
+                  child: DetailText(label: Strings.loginText),
                 ),
               ],
             ),

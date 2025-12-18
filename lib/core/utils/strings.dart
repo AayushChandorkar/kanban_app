@@ -1,0 +1,31 @@
+class Strings{
+  static const String dashboardText = "Dashboard";
+  static const String taskUpdatedSuccessfullyText = "Task Updated Successfully";
+  static const String noInternetText = "No Internet";
+  static const String loginText = "Login";
+  static const String registerText = "Register";
+  static const String editTaskText = "Edit Task";
+  static const String taskDetailsText = "Task Details";
+  static const String titleText = "Title";
+  static const String descriptionText = "Description";
+  static const String statusText = "Status";
+  static const String createdAtText = "Created At";
+  static const String createdSuccessfullyText = "Task Created Successfully";
+  static const String retryText = "Retry";
+  static const String addTaskText = "Add Task";
+  static const String todoText = "To Do";
+  static const String inProgressText = "In Progress";
+  static const String doneText = "Done";
+  static const String createTaskText = "Create Task";
+  static const String refreshText = "Refresh";
+  static const String updateText = "Update Task";
+  static const String deleteTaskText = "Delete Task";
+  static const String deleteText = "Delete";
+  static const String cancelText = "Cancel";
+  static const String taskCreatedText = "Task Created Successfully";
+  static const String checkYourConnectionText = "Please check your Internet Connection";
+  static const String somethingWentWrongText = "Something went wrong";
+  static const String noTasksAvailableText = "No Tasks Available";
+  static const String noTextsCreatedText = "No Texts Created";
+  static const String deleteConfirmationText = "Are you sure you want to delete this task?";
+}

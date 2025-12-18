@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban_app/core/utils/custom_text.dart';
 import 'package:kanban_app/features/tasks/presentation/screens/view_task_page.dart';
 
+import '../../../../core/utils/strings.dart';
 import '../../../../injection/di.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_events.dart';
@@ -39,26 +41,22 @@ class DashboardPage extends StatelessWidget {
 
           if (state is TaskError) {
             return Scaffold(
-              appBar: AppBar(title: const Text("Dashboard")),
+              appBar: AppBar(title: const DetailText(label:  Strings.dashboardText)),
               body: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.error_outline, size: 60),
                     const SizedBox(height: 16),
-                    const Text(
-                      "Something went wrong",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    DetailText( label:
+                      Strings.somethingWentWrongText,
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () => context.read<TaskBloc>().add(
                         LoadTasks(userId: userId),
                       ),
-                      child: const Text("Retry"),
+                      child: const DetailText(label:  Strings.retryText),
                     ),
                   ],
                 ),
@@ -74,30 +72,24 @@ class DashboardPage extends StatelessWidget {
 
           if (state.tasks.isEmpty) {
             return Scaffold(
-              appBar: AppBar(title: const Text("Dashboard")),
+              appBar: AppBar(title: const DetailText(label:  Strings.dashboardText)),
               body: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      "No Tasks Available",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    DetailText(label:
+                      Strings.noTasksAvailableText,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      "You haven’t created any tasks yet.",
-                      style: TextStyle(fontSize: 15),
-                      textAlign: TextAlign.center,
+                    DetailText(label:
+                      Strings.noTextsCreatedText,
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         context.read<TaskBloc>().add(LoadTasks(userId: userId));
                       },
-                      child: const Text("Refresh"),
+                      child: const DetailText(label:  Strings.refreshText),
                     ),
                   ],
                 ),
@@ -129,7 +121,7 @@ class DashboardPage extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text("Dashboard"),
+              title: const DetailText(label:  Strings.dashboardText),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.logout),
@@ -229,12 +221,8 @@ class DashboardPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Text(
+                DetailText(label:
                   "$title (${tasks.length})",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
                 const SizedBox(height: 12),
                 Expanded(
@@ -246,9 +234,8 @@ class DashboardPage extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             color: Colors.blue,
-                            child: Text(
+                            child: DetailText( label:
                               task.title,
-                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -273,8 +260,8 @@ class DashboardPage extends StatelessWidget {
     return Card(
       elevation: 2,
       child: ListTile(
-        title: Text(task.title),
-        subtitle: Text(task.description),
+        title: DetailText(label:  task.title),
+        subtitle: DetailText(label:  task.description),
         onTap: () {
           Navigator.push(
             context,
