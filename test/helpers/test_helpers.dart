@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:kanban_app/features/auth/data/datasource/remote/auth_local_data_source.dart';
 import 'package:kanban_app/features/auth/domain/usecases/user/create_user_usecase.dart';
 import 'package:kanban_app/features/auth/domain/usecases/user/delete_user_usecase.dart';
@@ -45,5 +46,6 @@ import 'package:kanban_app/features/auth/domain/repository/user_repository.dart'
   UpdateTaskUseCase,
   DeleteTaskUseCase,
   GetAllTasksUseCase,
+  Connectivity,
 ])
 void main() {}

@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/usecases/auth/check_status_usecase.dart';
@@ -26,38 +27,47 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onCheckAuth(
-      AuthCheckRequested event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+      AuthCheckRequested event,
+      Emitter<AuthState> emit,
+      ) async {
     final user = checkAuthStatusUseCase();
-    user != null
-        ? emit(AuthAuthenticated(user))
-        : emit(AuthUnauthenticated());
+    emit(user != null
+        ? AuthAuthenticated(user)
+        : const AuthUnauthenticated());
   }
 
   Future<void> _onSignIn(
-      SignInRequested event, Emitter<AuthState> emit) async {
+      SignInRequested event,
+      Emitter<AuthState> emit,
+      ) async {
     emit(AuthLoading());
+
     try {
-      final user = await signInUseCase(event.email, event.password);
+      final user = await signInUseCase(
+        event.email,
+        event.password,
+      );
       emit(AuthAuthenticated(user));
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'network-request-failed') {
-        emit(const AuthNoInternet());
-      } else {
-        emit(AuthError(e.message ?? "Authentication error"));
-      }
+      emit(AuthError(e.message ?? "Authentication failed"));
+    } catch (_) {
+      emit(const AuthError("Something went wrong"));
     }
   }
 
   Future<void> _onSignUp(
-      SignUpRequested event, Emitter<AuthState> emit) async {
+      SignUpRequested event,
+      Emitter<AuthState> emit,
+      ) async {
     emit(AuthLoading());
     final user = await signUpUseCase(event.email, event.password);
     emit(AuthAuthenticated(user));
   }
 
   Future<void> _onSignOut(
-      SignOutRequested event, Emitter<AuthState> emit) async {
+      SignOutRequested event,
+      Emitter<AuthState> emit,
+      ) async {
     await signOutUseCase();
     emit(const AuthUnauthenticated());
   }

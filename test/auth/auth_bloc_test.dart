@@ -14,6 +14,7 @@ import '../helpers/test_helpers.mocks.dart';
 
 void main() {
   late MockAuthRepository mockRepo;
+  late MockConnectivity mockConnectivity;
   late AuthBloc bloc;
 
   late SignInUseCase signInUseCase;
@@ -23,6 +24,7 @@ void main() {
 
   setUp(() {
     mockRepo = MockAuthRepository();
+    mockConnectivity = MockConnectivity();
 
     signInUseCase = SignInUseCase(mockRepo);
     signUpUseCase = SignUpUseCase(mockRepo);

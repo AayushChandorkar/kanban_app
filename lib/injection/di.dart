@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -37,6 +38,7 @@ final sl = GetIt.instance;
 void init() {
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => FirebaseAuth.instance);
+  sl.registerLazySingleton(() => Connectivity());
 
   sl.registerLazySingleton<UserRemoteDataSource>(
     () => UserRemoteDataSourceImpl(sl()),

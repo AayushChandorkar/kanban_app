@@ -7,6 +7,9 @@ import 'dart:async' as _i8;
 import 'dart:typed_data' as _i19;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i7;
+import 'package:connectivity_plus/connectivity_plus.dart' as _i32;
+import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart'
+    as _i33;
 import 'package:drift/drift.dart' as _i11;
 import 'package:drift/src/runtime/executor/stream_queries.dart' as _i12;
 import 'package:firebase_auth/firebase_auth.dart' as _i4;
@@ -3656,4 +3659,31 @@ class MockGetAllTasksUseCase extends _i1.Mock
             ),
           )
           as _i8.Future<List<_i25.TaskEntity>>);
+}
+
+/// A class which mocks [Connectivity].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConnectivity extends _i1.Mock implements _i32.Connectivity {
+  MockConnectivity() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Stream<List<_i33.ConnectivityResult>> get onConnectivityChanged =>
+      (super.noSuchMethod(
+            Invocation.getter(#onConnectivityChanged),
+            returnValue: _i8.Stream<List<_i33.ConnectivityResult>>.empty(),
+          )
+          as _i8.Stream<List<_i33.ConnectivityResult>>);
+
+  @override
+  _i8.Future<List<_i33.ConnectivityResult>> checkConnectivity() =>
+      (super.noSuchMethod(
+            Invocation.method(#checkConnectivity, []),
+            returnValue: _i8.Future<List<_i33.ConnectivityResult>>.value(
+              <_i33.ConnectivityResult>[],
+            ),
+          )
+          as _i8.Future<List<_i33.ConnectivityResult>>);
 }
