@@ -13,8 +13,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignOutUseCase signOutUseCase;
   final CheckAuthStatusUseCase checkAuthStatusUseCase;
 
-  bool _obscure = true;
-
   AuthBloc({
     required this.signInUseCase,
     required this.signUpUseCase,
@@ -25,59 +23,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignInRequested>(_onSignIn);
     on<SignUpRequested>(_onSignUp);
     on<SignOutRequested>(_onSignOut);
-    on<TogglePasswordVisibility>(_onTogglePassword);
-  }
-
-  void _onTogglePassword(
-      TogglePasswordVisibility event,
-      Emitter<AuthState> emit,
-      ) {
-    _obscure = !_obscure;
-    emit(AuthUnauthenticated(obscure: _obscure));
   }
 
   Future<void> _onCheckAuth(
       AuthCheckRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     final user = checkAuthStatusUseCase();
-    if (user != null) {
-      emit(AuthAuthenticated(user, obscure: _obscure));
-    } else {
-      emit(AuthUnauthenticated(obscure: _obscure));
-    }
+    user != null
+        ? emit(AuthAuthenticated(user))
+        : emit(AuthUnauthenticated());
   }
 
   Future<void> _onSignIn(
-      SignInRequested event,
-      Emitter<AuthState> emit,
-      ) async {
-    emit(AuthLoading(obscure: _obscure));
+      SignInRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     try {
       final user = await signInUseCase(event.email, event.password);
-      emit(AuthAuthenticated(user, obscure: _obscure));
+      emit(AuthAuthenticated(user));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'network-request-failed') {
-        emit(AuthNoInternet(obscure: _obscure));
+        emit(const AuthNoInternet());
       } else {
-        emit(AuthError(e.message ?? "Authentication error",
-            obscure: _obscure));
+        emit(AuthError(e.message ?? "Authentication error"));
       }
     }
   }
 
   Future<void> _onSignUp(
-      SignUpRequested event,
-      Emitter<AuthState> emit,
-      ) async {
-    emit(AuthLoading(obscure: _obscure));
+      SignUpRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     final user = await signUpUseCase(event.email, event.password);
-    emit(AuthAuthenticated(user, obscure: _obscure));
+    emit(AuthAuthenticated(user));
   }
 
   Future<void> _onSignOut(
-      SignOutRequested event,
-      Emitter<AuthState> emit,
-      ) async {
+      SignOutRequested event, Emitter<AuthState> emit) async {
     await signOutUseCase();
-    emit(AuthUnauthenticated(obscure: _obscure));
+    emit(const AuthUnauthenticated());
   }
 }

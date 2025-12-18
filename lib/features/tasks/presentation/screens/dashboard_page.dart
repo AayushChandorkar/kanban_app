@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban_app/features/tasks/presentation/screens/view_task_page.dart';
 
 import '../../../../injection/di.dart';
+import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth/auth_events.dart';
 import '../../domain/entities/task_entity.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_events.dart';
@@ -126,7 +128,18 @@ class DashboardPage extends StatelessWidget {
           final done = tasks.where((t) => t.status == "done").toList();
 
           return Scaffold(
-            appBar: AppBar(title: const Text("Dashboard")),
+            appBar: AppBar(
+              title: const Text("Dashboard"),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    context.read<AuthBloc>().add(SignOutRequested());
+                  },
+                ),
+              ],
+            ),
+
             floatingActionButton: FloatingActionButton(
               heroTag: null,
               onPressed: () {

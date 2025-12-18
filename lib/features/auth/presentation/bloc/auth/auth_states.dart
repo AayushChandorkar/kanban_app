@@ -1,37 +1,31 @@
-import 'package:kanban_app/features/auth/domain/entities/auth_entity.dart';
+import '../../../domain/entities/auth_entity.dart';
 
 abstract class AuthState {
-  final bool obscurePassword;
-  const AuthState({this.obscurePassword = true});
+  const AuthState();
 }
 
 class AuthInitial extends AuthState {
-  const AuthInitial() : super(obscurePassword: true);
+  const AuthInitial();
 }
 
 class AuthLoading extends AuthState {
-  const AuthLoading({required bool obscure})
-      : super(obscurePassword: obscure);
+  const AuthLoading();
 }
 
 class AuthAuthenticated extends AuthState {
   final AuthUser user;
-  const AuthAuthenticated(this.user, {required bool obscure})
-      : super(obscurePassword: obscure);
+  const AuthAuthenticated(this.user);
 }
 
 class AuthUnauthenticated extends AuthState {
-  const AuthUnauthenticated({required bool obscure})
-      : super(obscurePassword: obscure);
+  const AuthUnauthenticated();
 }
 
 class AuthError extends AuthState {
   final String message;
-  const AuthError(this.message, {required bool obscure})
-      : super(obscurePassword: obscure);
+  const AuthError(this.message);
 }
 
 class AuthNoInternet extends AuthState {
-  const AuthNoInternet({required bool obscure})
-      : super(obscurePassword: obscure);
+  const AuthNoInternet();
 }

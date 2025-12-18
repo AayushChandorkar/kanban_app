@@ -8,6 +8,7 @@ import '../bloc/auth/auth_events.dart';
 import '../bloc/auth/auth_states.dart';
 import '../bloc/user/user_bloc.dart';
 import '../bloc/user/user_events.dart';
+import '../cubit/password_visibility_cubit.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
@@ -21,8 +22,8 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => sl<AuthBloc>()),
         BlocProvider(create: (_) => sl<UserBloc>()),
+        BlocProvider(create: (_) => PasswordVisibilityCubit()),
       ],
       child: Scaffold(
         appBar: AppBar(title: const Text("Register")),
@@ -79,24 +80,25 @@ class RegisterPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
+                /// ✅ Password field using Cubit
+                BlocBuilder<PasswordVisibilityCubit, bool>(
+                  builder: (context, obscure) {
                     return TextField(
                       controller: passwordController,
-                      obscureText: state.obscurePassword,
+                      obscureText: obscure,
                       decoration: InputDecoration(
                         labelText: "Password",
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            state.obscurePassword
+                            obscure
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
                           onPressed: () {
                             context
-                                .read<AuthBloc>()
-                                .add(TogglePasswordVisibility());
+                                .read<PasswordVisibilityCubit>()
+                                .toggle();
                           },
                         ),
                       ),
