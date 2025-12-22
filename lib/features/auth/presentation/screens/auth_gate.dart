@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban_app/core/network/check_internet_connection.dart';
 
+import '../../../../core/network/internet_guard.dart';
 import '../../../tasks/presentation/screens/dashboard_page.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_states.dart';
@@ -28,7 +28,7 @@ class AuthGate extends StatelessWidget {
         if (state is AuthUnauthenticated) {
           return BlocProvider(
             create: (_) => PasswordVisibilityCubit(),
-            child: CheckInternetConnection(child: LoginPage()),
+            child: InternetGuard(child: LoginPage()),
           );
         }
 
