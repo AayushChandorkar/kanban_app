@@ -59,7 +59,10 @@ class AddTaskPage extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: DetailText(label: Strings.addTaskText)),
+        appBar: AppBar(title: Padding(
+          padding: EdgeInsets.only(top: 50),
+          child: DetailText(label: Strings.addTaskText),
+        )),
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(

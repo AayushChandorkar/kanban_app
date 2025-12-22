@@ -67,7 +67,10 @@ class EditTaskPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: DetailText(label:  Strings.editTaskText),
+          title: Padding(
+            padding: EdgeInsets.only(top: 50),
+            child: DetailText(label:  Strings.editTaskText),
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.delete),
@@ -143,7 +146,7 @@ class EditTaskPage extends StatelessWidget {
                         if (!_formKey.currentState!.validate()) return;
                         _updateTask(context, state.status);
                       },
-                      child: const DetailText(label:  Strings.updateText),
+                      child: const DetailText(label: Strings.updateText),
                     );
                   },
                 ),

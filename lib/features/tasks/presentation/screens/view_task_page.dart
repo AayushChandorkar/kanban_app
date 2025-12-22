@@ -20,7 +20,10 @@ class ViewTaskPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const DetailText(label:  Strings.taskDetailsText),
+        title: Padding(
+          padding: EdgeInsets.only(top: 50),
+          child: const DetailText(label:  Strings.taskDetailsText),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -67,6 +70,7 @@ class ViewTaskPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
+        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DetailText(label: Strings.titleText, value: task.title),

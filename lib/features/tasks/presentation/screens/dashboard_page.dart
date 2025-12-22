@@ -121,7 +121,9 @@ class DashboardPage extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: const DetailText(label:  Strings.dashboardText),
+              title: Padding(
+                  padding: EdgeInsets.only(top: 50),
+                  child: const DetailText(label: Strings.dashboardText)),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.logout),
